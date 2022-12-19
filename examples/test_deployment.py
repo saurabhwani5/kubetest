@@ -13,7 +13,7 @@ def test_deployment(kube):
 
     kube.create(d)
 
-    d.wait_until_ready(timeout=20)
+    d.wait_until_ready(timeout=200)
     d.refresh()
 
     pods = d.get_pods()
