@@ -31,11 +31,11 @@ class TestCastValue:
                 client.V1Namespace(kind="Namespace", api_version="apps/v1"),
             ),
             (
-                {"fieldRef": {"apiVersion": "apps/v1beta1", "fieldPath": "foobar"}},
+                {"fieldRef": {"apiVersion": "apps/v1", "fieldPath": "foobar"}},
                 "V1EnvVarSource",
                 client.V1EnvVarSource(
                     field_ref=client.V1ObjectFieldSelector(
-                        api_version="apps/v1beta1", field_path="foobar"
+                        api_version="apps/v1", field_path="foobar"
                     )
                 ),
             ),
@@ -151,23 +151,6 @@ class TestLoadType:
                 client.V1Container, os.path.join(manifest_dir, "simple-service.yaml")
             )
 
-    def test_simple_ingress_ok(self, manifest_dir, simple_ingress):
-        """Test loading the simple service successfully."""
-        obj = manifest.load_type(
-            client.ExtensionsV1beta1Ingress,
-            os.path.join(manifest_dir, "simple-ingress.yaml"),
-        )
-        assert obj == simple_ingress
-
-    def test_simple_ingress_wrong_type(self, manifest_dir):
-        """Test loading the simple ingress to the wrong type."""
-        with pytest.raises(ValueError):
-            # The V1Container requires a name -- since the manifest has no name,
-            # it will cause V1Container construction to fail with ValueError.
-            manifest.load_type(
-                client.V1Container, os.path.join(manifest_dir, "simple-ingress.yaml")
-            )
-
     def test_simple_replicaset_ok(self, manifest_dir, simple_replicaset):
         """Test loading the simple ReplicaSet successfully."""
         obj = manifest.load_type(
@@ -255,16 +238,8 @@ class TestGetType:
             ({"apiVersion": "v1", "kind": "Deployment"}, client.V1Deployment),
             ({"apiVersion": "apps/v1", "kind": "Deployment"}, client.V1Deployment),
             (
-                {"apiVersion": "apps/v1beta1", "kind": "Deployment"},
-                client.AppsV1beta1Deployment,
-            ),
-            (
-                {"apiVersion": "apps/v1beta2", "kind": "Deployment"},
-                client.V1beta2Deployment,
-            ),
-            (
-                {"apiVersion": "extensions/v1beta1", "kind": "Deployment"},
-                client.ExtensionsV1beta1Deployment,
+                {"apiVersion": "apps/v1", "kind": "Deployment"},
+                client.V1Deployment,
             ),
             (
                 {
@@ -272,13 +247,6 @@ class TestGetType:
                     "kind": "ClusterRoleBinding",
                 },
                 client.V1ClusterRoleBinding,
-            ),
-            (
-                {
-                    "apiVersion": "rbac.authorization.k8s.io/v1beta1",
-                    "kind": "ClusterRoleBinding",
-                },
-                client.V1beta1ClusterRoleBinding,
             ),
         ],
     )

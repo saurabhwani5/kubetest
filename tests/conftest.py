@@ -121,32 +121,6 @@ def simple_persistentvolumeclaim():
 
 
 @pytest.fixture()
-def simple_ingress():
-    """Return the Kubernetes config matching the simple-ingress.yaml manifest."""
-    return client.ExtensionsV1beta1Ingress(
-        api_version="extensions/v1beta1",
-        kind="Ingress",
-        metadata=client.V1ObjectMeta(name="my-ingress"),
-        spec=client.ExtensionsV1beta1IngressSpec(
-            rules=[
-                client.ExtensionsV1beta1IngressRule(
-                    http=client.ExtensionsV1beta1HTTPIngressRuleValue(
-                        paths=[
-                            client.ExtensionsV1beta1HTTPIngressPath(
-                                backend=client.ExtensionsV1beta1IngressBackend(
-                                    service_name="my-service", service_port=80
-                                ),
-                                path="/",
-                            )
-                        ]
-                    )
-                )
-            ],
-        ),
-    )
-
-
-@pytest.fixture()
 def simple_replicaset():
     """Return the Kubernetes config matching the simple-replicaset.yaml manifest."""
     return client.V1ReplicaSet(
