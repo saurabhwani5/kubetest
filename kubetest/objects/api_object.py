@@ -43,7 +43,7 @@ class ApiObject(abc.ABC):
     api_clients = None
     """A mapping of all the supported api clients for the API
     object type. Various resources can have multiple versions,
-    e.g. "apps/v1", "apps/v1beta1", etc. The preferred version
+    e.g. "apps/v1" etc. The preferred version
     for each resource type should be defined under the "preferred"
     key. The preferred API client will be used when the apiVersion
     is not specified for the resource.
