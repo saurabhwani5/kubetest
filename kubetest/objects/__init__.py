@@ -9,8 +9,6 @@ from .container import Container
 from .daemonset import DaemonSet
 from .deployment import Deployment
 from .endpoints import Endpoints
-from .event import Event
-from .ingress import Ingress
 from .namespace import Namespace
 from .node import Node
 from .persistentvolumeclaim import PersistentVolumeClaim

@@ -352,38 +352,6 @@ class TestClient:
             persistentvolumeclaim.namespace = self.namespace
         return persistentvolumeclaim
 
-    def load_ingress(
-        self,
-        path: str,
-        set_namespace: bool = True,
-        name: Optional[str] = None,
-    ) -> objects.Ingress:
-        """Load a manifest YAML into a Ingress object.
-
-        By default, this will augment the Ingress object with
-        the generated test case namespace. This behavior can be
-        disabled with the ``set_namespace`` flag.
-
-        Args:
-            path (str): The path to the Ingress manifest.
-            set_namespace (bool): Enable/disable the automatic
-                augmentation of the Ingress namespace.
-            name: The name of the resource to load. If the manifest file
-                contains a single object definition for the type being
-                loaded, it is not necessary to specify the name. If the
-                manifest has multiple definitions containing the same
-                type, a name is required to differentiate between them.
-                If no name is specified in such case, an error is raised.
-
-        Returns:
-            objects.Ingress: The ingress for the specified manifest.
-        """
-        log.info("loading ingress from path: %s", path)
-        ingress = objects.Ingress.load(path, name=name)
-        if set_namespace:
-            ingress.namespace = self.namespace
-        return ingress
-
     def load_replicaset(
         self,
         path: str,
@@ -638,42 +606,6 @@ class TestClient:
 
         return endpoints
 
-    def get_events(
-        self,
-        fields: Dict[str, str] = None,
-        labels: Dict[str, str] = None,
-        all_namespaces: bool = False,
-    ) -> Dict[str, objects.Event]:
-        """Get the latest Events that occurred in the cluster.
-
-        Args:
-            fields: A dictionary of fields used to restrict the returned collection
-                of Events to only those which match these field selectors. By
-                default, no restricting is done.
-            labels: A dictionary of labels used to restrict the returned collection
-                of Events to only those which match these label selectors. By
-                default, no restricting is done.
-            all_namespaces: If True, get the events across all namespaces.
-
-        Returns:
-            A dictionary where the key is the Event name and the value is the
-            Event itself.
-        """
-        selectors = utils.selector_kwargs(fields, labels)
-
-        if all_namespaces:
-            results = client.CoreV1Api().list_event_for_all_namespaces(**selectors)
-        else:
-            results = client.CoreV1Api().list_namespaced_event(
-                namespace=self.namespace, **selectors
-            )
-
-        events = {}
-        for obj in results.items:
-            event = objects.Event(obj)
-            events[event.name] = event
-
-        return events
 
     def get_namespaces(
         self,
@@ -897,45 +829,6 @@ class TestClient:
 
         return persistentvolumeclaims
 
-    def get_ingresses(
-        self,
-        namespace: str = None,
-        fields: Dict[str, str] = None,
-        labels: Dict[str, str] = None,
-    ) -> Dict[str, objects.Ingress]:
-        """Get Ingresses from the cluster.
-
-        Args:
-            namespace: The namespace to get the Ingress from. If not
-                specified, it will use the auto-generated test case namespace
-                by default.
-            fields: A dictionary of fields used to restrict the returned collection
-                of Ingress to only those which match these field selectors. By
-                default, no restricting is done.
-            labels: A dictionary of labels used to restrict the returned collection
-                of Ingress to only those which match these label selectors. By
-                default, no restricting is done.
-
-        Returns:
-            A dictionary where the key is the Ingress name and the value
-            is the Ingress itself.
-        """
-        if namespace is None:
-            namespace = self.namespace
-
-        selectors = utils.selector_kwargs(fields, labels)
-
-        results = objects.Ingress.preferred_client().list_namespaced_ingress(
-            namespace=namespace,
-            **selectors,
-        )
-
-        ingresses = {}
-        for obj in results.items:
-            ingress = objects.Ingress(obj)
-            ingresses[ingress.name] = ingress
-
-        return ingresses
 
     def get_replicasets(
         self,
