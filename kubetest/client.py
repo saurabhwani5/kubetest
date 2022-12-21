@@ -352,6 +352,15 @@ class TestClient:
             persistentvolumeclaim.namespace = self.namespace
         return persistentvolumeclaim
 
+    def load_storage_class(
+        self,
+        path: str,
+        name: Optional[str] = None,
+    ) -> objects.storageclass:
+        log.info("loading storage class from path: %s", path)
+        storageclass = objects.storageclass.load(path, name=name)
+        return storageclass
+
     def load_replicaset(
         self,
         path: str,
@@ -794,7 +803,7 @@ class TestClient:
         fields: Dict[str, str] = None,
         labels: Dict[str, str] = None,
     ) -> Dict[str, objects.PersistentVolumeClaim]:
-        """Get PersistentVolumeClaims from the cluster.
+        """Get Claims from the cluster.
 
         Args:
             namespace: The namespace to get the PersistentVolumeClaim from. If not

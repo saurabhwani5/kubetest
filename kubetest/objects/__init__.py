@@ -19,3 +19,4 @@ from .secret import Secret
 from .service import Service
 from .serviceaccount import ServiceAccount
 from .statefulset import StatefulSet
+from .storageclass import storageclass
